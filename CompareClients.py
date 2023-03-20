@@ -1,20 +1,19 @@
 import argparse
 import datetime
-from dateutil import parser as dateparser
 from ApolloStudio import ApolloStudio
-from Plot import gaussian
 import matplotlib.pyplot as plt
+from util import parse_date, flat_buckets, plot
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
 
-    parser.add_argument('-f', '--from', type=lambda d: dateparser.parse(d), help='From date')
-    parser.add_argument('-t', '--to', type=lambda d: dateparser.parse(d), default=datetime.date.today(), help='To date')
+    parser.add_argument('-f', '--from', type=parse_date, help='From date')
+    parser.add_argument('-t', '--to', type=parse_date, default=datetime.date.today(), help='To date')
     parser.add_argument('-q', '--queryId', type=str, help='Query id')
     parser.add_argument('-g', '--graph', type=str, help='graph id')
     parser.add_argument('-c', '--clientName', type=str, action='append', help='Client name')
     parser.add_argument('-n', '--title', type=str, required=True, help="Title of the plot")
-    parser.add_argument('-p', '--plot_type', type=str, required=True, help="Type of plot (gaussian)")
+    parser.add_argument('-p', '--plot_type', type=str, default="gaussian", help="Type of plot (gaussian)")
     parser.add_argument('-m', '--max_response_time', type=int, default=float('inf'), help="Filter out outliers")
     parser.add_argument('-o', '--output', type=str, required=True, help="Save file as")
 
@@ -25,7 +24,7 @@ if __name__ == "__main__":
 
     from_timestamp_offset = -int((datetime.datetime.now() - from_date).total_seconds())
     to_timestamp_offset = -int((datetime.datetime.now() - to_date).total_seconds())
-    
+
     for clientName in arguments["clientName"]:
         results = ApolloStudio().request(
             graph=arguments["graph"],
@@ -34,14 +33,15 @@ if __name__ == "__main__":
             from_timestamp=from_timestamp_offset,
             to_timestamp=to_timestamp_offset
         )
-        buckets = list(map(lambda x: x.buckets_speeds, results))
-        buckets = list(filter(lambda x: len(x) > 0, buckets))
-        buckets = sum(buckets, [])  
-        buckets = list(filter(lambda x: x < arguments["max_response_time"], buckets))
+        buckets = flat_buckets(
+            results,
+            arguments["max_response_time"]
+        )
         
-        print(len(buckets), buckets, clientName)
-        gaussian(
-            buckets,
+        print(len(buckets), arguments["plot_type"])
+        plot(
+            plot_type=arguments["plot_type"],
+            data=buckets,
             label=clientName
         )
 

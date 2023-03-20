@@ -2,8 +2,8 @@ import argparse
 import datetime
 from dateutil import parser as dateparser
 from ApolloStudio import ApolloStudio
-from Plot import gaussian
 import matplotlib.pyplot as plt
+from util import flat_buckets, plot
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
@@ -29,7 +29,7 @@ if __name__ == "__main__":
     for index, (from_date, to_date) in enumerate(zip(arguments["from"], arguments["to"])):
         from_timestamp_offset = -int((datetime.datetime.now() - from_date).total_seconds())
         to_timestamp_offset = -int((datetime.datetime.now() - to_date).total_seconds())
-        
+                
         clientName = arguments["clientName"]
         results = ApolloStudio().request(
             graph=arguments["graph"],
@@ -38,18 +38,15 @@ if __name__ == "__main__":
             from_timestamp=from_timestamp_offset,
             to_timestamp=to_timestamp_offset
         )
-        buckets = list(map(lambda x: x.buckets_speeds, results))
-        buckets = list(filter(lambda x: len(x) > 0, buckets))
-        buckets = sum(buckets, [])  
-        buckets = list(filter(lambda x: x < arguments["max_response_time"], buckets))
-        if len(buckets) == 0:
-            continue
-
-        gaussian(
-            buckets,
+        buckets = flat_buckets(
+            results,
+            arguments["max_response_time"]
+        )
+        plot(
+            plot_type=arguments["plot_type"],
+            data=buckets,
             label=(f"{from_date.strftime('%Y-%m-%d')} -> {to_date.strftime('%Y-%m-%d')}" if not arguments["legends"] else arguments["legends"][index])
         )
-
     plt.title(arguments["title"])
     plt.legend(loc="upper left")
     if arguments["output"]:
