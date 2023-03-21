@@ -1,5 +1,6 @@
 import requests
 import os
+import time
 
 class GraphqlRequest:
     def __init__(self, endpoint) -> None:
@@ -17,4 +18,5 @@ class GraphqlRequest:
                 "variables": variables,
             }
         )
+        time.sleep(0.2)
         return response

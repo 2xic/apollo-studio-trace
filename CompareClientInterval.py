@@ -1,15 +1,14 @@
 import argparse
 import datetime
-from dateutil import parser as dateparser
 from ApolloStudio import ApolloStudio
 import matplotlib.pyplot as plt
-from util import flat_buckets, plot
+from util import flat_buckets, plot, parse_date, move_legends
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
 
-    parser.add_argument('-f', '--from', nargs='+', type=dateparser.parse, help='From date')
-    parser.add_argument('-t', '--to', nargs='+', type=dateparser.parse, default=datetime.date.today(), help='To date')
+    parser.add_argument('-f', '--from', nargs='+', type=parse_date, help='From date')
+    parser.add_argument('-t', '--to', nargs='+', type=parse_date, default=datetime.date.today(), help='To date')
     parser.add_argument('-g', '--graph', type=str, required=True, help='graph id')
     parser.add_argument('-q', '--queryId', type=str, required=True, help='Query id')
     parser.add_argument('-c', '--clientName', type=str, required=True, help='Client name')
@@ -51,6 +50,7 @@ if __name__ == "__main__":
     plt.title(arguments["title"])
     plt.legend(loc="upper left")
     if arguments["output"]:
+        move_legends()
         plt.savefig(arguments["output"])
     else:
         plt.show()

@@ -2,7 +2,7 @@ import argparse
 import datetime
 from ApolloStudio import ApolloStudio
 import matplotlib.pyplot as plt
-from util import parse_date, flat_buckets, plot
+from util import parse_date, flat_buckets, plot, move_legends
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
@@ -48,6 +48,7 @@ if __name__ == "__main__":
     plt.title(arguments["title"])
     plt.legend(loc="upper left")
     if arguments["output"]:
+        move_legends()
         plt.savefig(arguments["output"])
     else:
         plt.show()

@@ -1,6 +1,7 @@
 import datetime
 from dateutil import parser as dateparser
 from Plot import gaussian, histogram
+import matplotlib.pyplot as plt
 
 def parse_date(date):
     if date == "now":
@@ -26,3 +27,13 @@ def plot(plot_type, data, label):
             data,
             label=label
         )
+
+def move_legends():
+    ax = plt.gca()
+    box = ax.get_position()
+    ax.set_position([box.x0, box.y0 + box.height * 0.1, box.width, box.height * 0.95])
+
+    # Put a legend below current axis
+    ax.legend(loc='upper center', bbox_to_anchor=(0.5, -0.05),
+            fancybox=True, shadow=True, ncol=5)
+   # plt.tight_layout()

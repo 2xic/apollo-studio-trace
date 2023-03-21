@@ -3,3 +3,4 @@ compare_client_intervals.sh
 compare_clients_plot.sh
 *.png
 *.sh
+.cache

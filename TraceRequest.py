@@ -4,7 +4,6 @@ from jsonpath_ng import parse
 class TraceRequest:
     def __init__(self, entry) -> None:
         self.entry = entry
-        print(entry)
         self.status = entry["http"]["statusCode"]
         self.durationMs = entry["durationMs"]
         self.variables = {}
