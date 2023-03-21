@@ -1,0 +1,37 @@
+query GetQueryStats(
+    $graph: ID!, 
+    $traceId: ID!
+) {
+    me {
+        ...on User {
+            name
+            memberships{
+                account {
+                    name
+                    graphs {
+                        id
+                        name
+                    }
+                }
+            }
+        }
+    }
+    graph(id: $graph) {
+        id
+        name
+        trace(id: $traceId){
+            durationMs
+            variablesJSON {
+                key
+                value
+            }
+            http {
+                statusCode
+                requestHeaders {
+                    key
+                    value
+                }
+            }
+        }
+    }
+}

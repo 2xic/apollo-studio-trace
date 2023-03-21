@@ -1,0 +1,54 @@
+query GetQueryTraceRefs(
+    $graph: ID!, 
+    $queryId: ID!, 
+    $clientName: String!,
+    $from: Timestamp!,
+    $to: Timestamp!,
+) {
+    me {
+        ...on User {
+            name
+            memberships{
+                account {
+                    name
+                    graphs {
+                        id
+                        name
+                    }
+                }
+            }
+        }
+    }
+    graph(id: $graph) {
+        id
+        name
+        stats(
+            from:$from,
+            to:$to,
+            resolution: R15M
+        ){
+            __typename
+            traceRefs(
+                filter:{
+                    queryId:$queryId,
+                    or: [
+                        {clientName:$clientName}
+                    ],
+                    in: {
+                        schemaTag: [
+                            "",
+                            "current"
+                        ]
+                    }
+                }
+            ){
+                timestamp
+                ... on ServiceTraceRefsRecord{
+                    groupBy{
+                       traceId
+                    }
+                }
+            }
+        }
+    }
+}

@@ -3,6 +3,17 @@ import numpy as np
 import math
 from scipy.stats import norm
 
+def scatter(
+        x,
+        y,
+        label,
+        xlabel,
+        ylabel
+):
+    plt.scatter(x, y, label=label)
+    plt.xlabel(xlabel=xlabel)
+    plt.ylabel(ylabel=ylabel)
+
 def gaussian(time_usage, label):
     mu = np.mean(time_usage)
     variance = np.var(time_usage)

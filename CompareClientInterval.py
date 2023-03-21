@@ -31,7 +31,7 @@ if __name__ == "__main__":
         to_timestamp_offset = -int((datetime.datetime.now() - to_date).total_seconds())
                 
         clientName = arguments["clientName"]
-        results = ApolloStudio().request(
+        results = ApolloStudio().get_query_stats(
             graph=arguments["graph"],
             queryId=arguments["queryId"],
             clientName=clientName,
@@ -42,6 +42,7 @@ if __name__ == "__main__":
             results,
             arguments["max_response_time"]
         )
+        print(len(buckets), arguments["plot_type"])
         plot(
             plot_type=arguments["plot_type"],
             data=buckets,

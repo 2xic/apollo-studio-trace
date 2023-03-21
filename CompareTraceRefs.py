@@ -2,7 +2,8 @@ import argparse
 import datetime
 from ApolloStudio import ApolloStudio
 import matplotlib.pyplot as plt
-from util import parse_date, flat_buckets, plot
+from Plot import scatter
+from util import parse_date
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
@@ -13,10 +14,9 @@ if __name__ == "__main__":
     parser.add_argument('-g', '--graph', type=str, help='graph id')
     parser.add_argument('-c', '--clientName', type=str, action='append', help='Client name')
     parser.add_argument('-n', '--title', type=str, required=True, help="Title of the plot")
-    parser.add_argument('-p', '--plot_type', type=str, default="gaussian", help="Type of plot (gaussian)")
     parser.add_argument('-m', '--max_response_time', type=int, default=float('inf'), help="Filter out outliers")
     parser.add_argument('-o', '--output', type=str, required=True, help="Save file as")
-
+    parser.add_argument('-e', '--expression', type=str, required=True, help="Expression used to find array of variables")
     arguments = vars(parser.parse_args())
 
     from_date:datetime.date = arguments["from"]
@@ -26,23 +26,28 @@ if __name__ == "__main__":
     to_timestamp_offset = -int((datetime.datetime.now() - to_date).total_seconds())
 
     for clientName in arguments["clientName"]:
-        results = ApolloStudio().get_query_stats(
+        results = ApolloStudio().get_trace_refs(
             graph=arguments["graph"],
             queryId=arguments["queryId"],
             clientName=clientName,
             from_timestamp=from_timestamp_offset,
             to_timestamp=to_timestamp_offset
         )
-        buckets = flat_buckets(
-            results,
-            arguments["max_response_time"]
-        )
-        
-        print(len(buckets), arguments["plot_type"])
-        plot(
-            plot_type=arguments["plot_type"],
-            data=buckets,
-            label=clientName
+        response_time = []
+        variables_length = []
+
+        for i in results:
+            response = i.get_full_trace()
+            response_time.append(response.durationMs)
+            variables_length_expression = arguments["expression"]
+            variables_length.append(response.find_variables_length(expression=variables_length_expression))
+
+        scatter(
+            x=variables_length,
+            y=response_time,
+            label=clientName,
+            xlabel="variables length",
+            ylabel="Response time (MS)"
         )
 
     plt.title(arguments["title"])
