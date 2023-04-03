@@ -26,9 +26,9 @@ if __name__ == "__main__":
         assert len(arguments["from"]) == len(arguments["legends"])
 
     for index, (from_date, to_date) in enumerate(zip(arguments["from"], arguments["to"])):
-        from_timestamp_offset = -int((datetime.datetime.now() - from_date).total_seconds())
-        to_timestamp_offset = -int((datetime.datetime.now() - to_date).total_seconds())
-                
+        from_timestamp_offset = -int((parse_date('now') - from_date).total_seconds())
+        to_timestamp_offset = -int((parse_date('now') - to_date).total_seconds())
+
         clientName = arguments["clientName"]
         results = ApolloStudio().get_query_stats(
             graph=arguments["graph"],

@@ -20,6 +20,8 @@ query GetQueryStats(
         id
         name
         trace(id: $traceId){
+            startTime
+            endTime
             durationMs
             variablesJSON {
                 key

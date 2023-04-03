@@ -94,7 +94,7 @@ class ApolloStudio:
             results = response_data["data"]["graph"]["trace"]
             if results is None:
                 return None
-            return TraceRequest(results)
+            return TraceRequest(results, traceId=traceId)
 
     def _read_cache(self, key):
         file_path = self._get_cache_path(key)

@@ -4,3 +4,5 @@ compare_clients_plot.sh
 *.png
 *.sh
 .cache
+external-data
+.DS_Store

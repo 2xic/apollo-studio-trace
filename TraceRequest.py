@@ -1,10 +1,15 @@
 import json
 from jsonpath_ng import parse
+from util import parse_date
+from datetime import datetime, timezone
 
 class TraceRequest:
-    def __init__(self, entry) -> None:
+    def __init__(self, entry, traceId) -> None:
         self.entry = entry
+        self.traceId = traceId
         self.status = entry["http"]["statusCode"]
+        self.started = parse_date(entry["startTime"])
+        self.end = parse_date(entry["endTime"])
         self.durationMs = entry["durationMs"]
         self.variables = {}
         for i in entry["variablesJSON"]:
